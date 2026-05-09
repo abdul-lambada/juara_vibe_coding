@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IoT & Network Lab Helper | SMK Edition</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;800&family=JetBrains+Mono&display=swap"
+        rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Plus+Jakarta+Sans', sans-serif;
+            background-color: #020617;
+            color: #f8fafc;
+        }
+
+        .glass {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .neon-border {
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.2);
+        }
+
+        .code-font {
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0f172a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #334155;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #475569;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col items-center p-4 md:p-8">
+    <!-- Background Decor -->
+    <div class="fixed top-0 left-0 w-full h-full -z-10 overflow-hidden pointer-events-none">
+        <div class="absolute -top-24 -left-24 w-96 h-96 bg-blue-600/20 rounded-full blur-[120px]"></div>
+        <div class="absolute top-1/2 -right-24 w-80 h-80 bg-purple-600/10 rounded-full blur-[100px]"></div>
+    </div>
+
+    <header class="w-full max-w-6xl mb-12 text-center">
+        <h1
+            class="text-4xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-sky-400 to-indigo-500 mb-4 tracking-tight">
+            IoT & Network Lab Helper
+        </h1>
+        <p class="text-slate-400 text-lg uppercase tracking-widest font-semibold">Smart Assistant for Vocational
+            Excellence</p>
+    </header>
+
+    <main class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        <!-- Feature 1 & 2: Subnetting & Arduino (Left Column) -->
+        <div class="lg:col-span-7 space-y-8">
+
+            <!-- Subnetting Calculator -->
+            <section class="glass p-6 rounded-3xl neon-border">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-sky-500/20 rounded-lg text-sky-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold">Subnetting Calculator</h2>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-2">IP Address</label>
+                        <input type="text" id="ipInput" placeholder="192.168.1.1"
+                            class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 transition-all">
+                    </div>
+                    <div>
+                        <label class="block text-sm text-slate-400 mb-2">CIDR Prefix</label>
+                        <input type="number" id="cidrInput" placeholder="24" min="0" max="32"
+                            class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-sky-500 transition-all">
+                    </div>
+                </div>
+                <button onclick="calculateSubnet()"
+                    class="w-full bg-sky-600 hover:bg-sky-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-sky-900/20 mb-6">Calculate
+                    Subnet</button>
+
+                <div id="subnetResult" class="hidden space-y-4">
+                    <div class="grid grid-cols-2 gap-4 text-sm">
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block">Network</span>
+                            <span id="resNetwork" class="font-mono text-sky-400"></span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block">Netmask</span>
+                            <span id="resMask" class="font-mono text-sky-400"></span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block">Broadcast</span>
+                            <span id="resBroadcast" class="font-mono text-sky-400"></span>
+                        </div>
+                        <div class="bg-slate-900/80 p-3 rounded-lg border border-slate-800">
+                            <span class="text-slate-500 block">Usable Range</span>
+                            <span id="resRange" class="font-mono text-sky-400"></span>
+                        </div>
+                    </div>
+                    <!-- Subnet Visualizer -->
+                    <div class="bg-slate-900/40 p-4 rounded-xl border border-white/5">
+                        <p class="text-[10px] text-slate-500 mb-2 uppercase tracking-tighter">Binary Visualization (Network vs Host)</p>
+                        <div id="subnetVisual" class="flex flex-wrap gap-1"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Arduino/ESP32 Generator -->
+            <section class="glass p-6 rounded-3xl neon-border">
+                <div class="flex items-center gap-3 mb-6">
+                    <div class="p-2 bg-indigo-500/20 rounded-lg text-indigo-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                            stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4" />
+                        </svg>
+                    </div>
+                    <h2 class="text-2xl font-bold">IoT Code Generator</h2>
+                </div>
+                <div class="flex gap-4 mb-4">
+                    <select id="boardSelect"
+                        class="flex-1 bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500">
+                        <option value="arduino">Arduino Uno/Nano</option>
+                        <option value="esp32">ESP32 DevKit</option>
+                    </select>
+                    <select id="sensorSelect"
+                        class="flex-1 bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500">
+                        <option value="dht22">DHT22 (Temp/Hum)</option>
+                        <option value="ultrasonic">HC-SR04 (Distance)</option>
+                        <option value="mq2">MQ2 (Gas/Smoke)</option>
+                        <option value="lcd">LCD I2C 16x2</option>
+                    </select>
+                    <input type="number" id="pinInput" placeholder="Pin"
+                        class="w-20 bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 focus:outline-none focus:border-indigo-500">
+                </div>
+                <button onclick="generateIoTCode()"
+                    class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-indigo-900/20 mb-4">Generate IoT Code</button>
+
+                <div class="relative group">
+                    <textarea id="codeOutput" readonly
+                        class="w-full h-48 bg-black/40 rounded-xl p-4 text-xs code-font text-emerald-400 border border-slate-800 focus:outline-none"
+                        placeholder="// Generated code will appear here..."></textarea>
+                    <button onclick="copyCode()"
+                        class="absolute top-2 right-2 p-2 bg-slate-800 rounded-lg hover:bg-slate-700 text-slate-300">Copy</button>
+                </div>
+            </section>
+        </div>
+
+        <!-- Chatbot Section (Right Column) -->
+        <div class="lg:col-span-5">
+            <section class="glass h-[700px] flex flex-col rounded-3xl neon-border overflow-hidden">
+                <div class="p-6 border-b border-white/5 bg-white/5 flex items-center justify-between">
+                    <div class="flex items-center gap-3">
+                        <div class="w-3 h-3 bg-emerald-500 rounded-full animate-pulse"></div>
+                        <h2 class="text-xl font-bold">Lab Assistant</h2>
+                    </div>
+                    <div class="flex items-center gap-3">
+                        <button id="voiceToggle" class="p-2 bg-slate-800 rounded-lg text-slate-400 hover:text-sky-400 transition-colors" title="Toggle Voice (TTS)">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z" />
+                            </svg>
+                        </button>
+                        <span class="text-[10px] text-slate-500 hidden md:block">Gemini 1.5 Flash</span>
+                    </div>
+                </div>
+
+                <!-- Chat Window -->
+                <div id="chatWindow" class="flex-1 overflow-y-auto p-6 space-y-4">
+                    <div class="flex flex-col gap-1">
+                        <div class="bg-slate-800 rounded-2xl rounded-tl-none p-4 max-w-[85%] text-sm">
+                            Halo! Saya asisten Lab IoT & Jaringan. Ada yang bisa saya bantu? Kamu bisa tanya tentang
+                            Subnetting, konfigurasi Router, atau coding Arduino.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input -->
+                <div class="p-6 border-t border-white/5 bg-white/5">
+                    <div id="imagePreview" class="hidden mb-3 p-2 bg-slate-900/80 rounded-xl border border-sky-500/30 flex items-center justify-between">
+                        <span class="text-xs text-sky-400">Image attached...</span>
+                        <button id="clearImg" class="text-rose-500 text-xs font-bold">REMOVE</button>
+                    </div>
+                    <div class="relative flex gap-2">
+                        <label class="cursor-pointer p-4 bg-slate-800 hover:bg-slate-700 rounded-2xl transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z" />
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z" />
+                            </svg>
+                            <input type="file" id="imageInput" class="hidden" accept="image/*">
+                        </label>
+                        <input type="text" id="chatInput" placeholder="Tanya atau upload foto alat lab..."
+                            class="flex-1 bg-slate-900/50 border border-slate-700 rounded-2xl px-5 py-4 focus:outline-none focus:border-sky-500 transition-all">
+                        <button id="sendBtn"
+                            class="px-6 bg-sky-600 hover:bg-sky-500 rounded-2xl transition-all">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 20 20"
+                                fill="currentColor">
+                                <path
+                                    d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="mt-16 mb-8 w-full max-w-6xl flex flex-col md:flex-row justify-between items-center gap-4 text-slate-500 text-sm">
+        <p>&copy; 2026 IoT & Network Lab Helper • Juara Vibe Coding Competition</p>
+        <button onclick="exportToPDF()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl transition-all border border-white/5">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-rose-500" viewBox="0 0 20 20" fill="currentColor">
+                <path fill-rule="evenodd" d="M6 2a2 2 0 00-2 2v12a2 2 0 002 2h8a2 2 0 002-2V7.414A2 2 0 0015.414 6L12 2.586A2 2 0 0010.586 2H6zm5 6a1 1 0 10-2 0v3.586l-1.293-1.293a1 1 0 10-1.414 1.414l3 3a1 1 0 001.414 0l3-3a1 1 0 00-1.414-1.414L11 11.586V8z" clip-rule="evenodd" />
+            </svg>
+            Export Lab Report (PDF)
+        </button>
+    </footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

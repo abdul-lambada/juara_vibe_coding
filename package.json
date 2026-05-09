@@ -1,0 +1,13 @@
+{
+  "name": "juara-vibe-coding",
+  "version": "1.0.0",
+  "description": "AetherVibe AI - Creative Engine for Juara Vibe Coding",
+  "main": "index.html",
+  "scripts": {
+    "start": "serve .",
+    "dev": "serve ."
+  },
+  "dependencies": {
+    "serve": "^14.2.4"
+  }
+}
