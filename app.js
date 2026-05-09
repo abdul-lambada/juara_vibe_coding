@@ -162,6 +162,23 @@ voiceToggle.onclick = () => {
     if(!voiceActive) window.speechSynthesis.cancel();
 };
 
+// --- Persistence Logic ---
+function saveSession() {
+    const chatData = chatWindow.innerHTML;
+    localStorage.setItem('vibe_lab_session', chatData);
+}
+
+function loadSession() {
+    const saved = localStorage.getItem('vibe_lab_session');
+    if (saved) {
+        chatWindow.innerHTML = saved;
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+}
+
+// Call on load
+window.addEventListener('load', loadSession);
+
 async function askGemini() {
     const msg = chatInput.value.trim();
     if ((!msg && !currentImg) || isTyping) return;
@@ -213,6 +230,7 @@ function appendMsg(sender, text, id) {
     div.appendChild(bubble);
     chatWindow.appendChild(div);
     chatWindow.scrollTop = chatWindow.scrollHeight;
+    saveSession();
 }
 
 async function typewriterEffect(text) {
@@ -241,6 +259,7 @@ async function typewriterEffect(text) {
                 setTimeout(type, 15);
             } else {
                 b.innerHTML = formatted;
+                saveSession();
                 resolve();
             }
         }
